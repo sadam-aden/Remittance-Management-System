@@ -30,7 +30,7 @@ export default async function SentMoneyPage({
 
   const [{ items, total }, customersResult, currencies, settings] = await Promise.all([
     sentRepository.list({ search, status, page, pageSize, sortBy, sortDir }),
-    customerRepository.list({ pageSize: 500 }),
+    customerRepository.list({ pageSize: 500, sortBy: "fullName", sortDir: "asc" }),
     currencyRepository.listActive(),
     settingsRepository.get(),
   ]);

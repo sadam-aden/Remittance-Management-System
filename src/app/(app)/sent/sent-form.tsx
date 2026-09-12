@@ -161,16 +161,16 @@ export function SentForm({
   return (
     <form
       onSubmit={handleSubmit((data) => onSubmit(data, receiptImageUrl, beneficiaryId))}
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-5"
       noValidate
     >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="date">Date</Label>
           <Input id="date" type="date" {...register("date")} />
           {errors.date && <p className="text-xs text-sent">{errors.date.message}</p>}
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label>Sender</Label>
           <Controller
             control={control}
@@ -178,7 +178,9 @@ export function SentForm({
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select the paying customer" />
+                  <SelectValue placeholder="Select the paying customer">
+                    {(value: string) => customers.find((c) => c.id === value)?.fullName ?? "Select the paying customer"}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {customers.map((c) => (
@@ -195,7 +197,7 @@ export function SentForm({
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Label>Recipient Lookup</Label>
         <BeneficiaryLookup
           onSelect={handleBeneficiarySelect}
@@ -213,22 +215,22 @@ export function SentForm({
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="recipientName">Recipient Name</Label>
           <Input id="recipientName" {...register("recipientName")} />
           {errors.recipientName && (
             <p className="text-xs text-sent">{errors.recipientName.message}</p>
           )}
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="recipientPhone">Recipient Phone</Label>
           <Input id="recipientPhone" {...register("recipientPhone")} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
           <Label>Country</Label>
           <Controller
             control={control}
@@ -262,7 +264,7 @@ export function SentForm({
           />
           {errors.country && <p className="text-xs text-sent">{errors.country.message}</p>}
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label>City</Label>
           {cityMode === "other" ? (
             <div className="flex gap-2">
@@ -315,7 +317,7 @@ export function SentForm({
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Label>Payment Method</Label>
         <Controller
           control={control}
@@ -340,18 +342,18 @@ export function SentForm({
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="flex flex-col gap-1.5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="amount">Amount</Label>
           <Input id="amount" type="number" step="0.01" min="0" {...register("amount")} />
           {errors.amount && <p className="text-xs text-sent">{errors.amount.message}</p>}
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="transferFee">Fee</Label>
           <Input id="transferFee" type="number" step="0.01" min="0" {...register("transferFee")} />
           {errors.transferFee && <p className="text-xs text-sent">{errors.transferFee.message}</p>}
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label>Currency</Label>
           <Controller
             control={control}
@@ -374,27 +376,27 @@ export function SentForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="exchangeRate">Exchange Rate</Label>
           <Input id="exchangeRate" type="number" step="0.0001" min="0" {...register("exchangeRate")} />
           {errors.exchangeRate && (
             <p className="text-xs text-sent">{errors.exchangeRate.message}</p>
           )}
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="totalPaid">Total Paid</Label>
           <Input id="totalPaid" type="number" step="0.01" min="0" {...register("totalPaid")} />
           {errors.totalPaid && <p className="text-xs text-sent">{errors.totalPaid.message}</p>}
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="notes">Notes</Label>
         <Textarea id="notes" rows={3} {...register("notes")} />
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Label>Receipt Image</Label>
         <ReceiptUpload value={receiptImageUrl} onChange={setReceiptImageUrl} />
       </div>

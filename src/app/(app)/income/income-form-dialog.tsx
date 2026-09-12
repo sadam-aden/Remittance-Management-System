@@ -56,7 +56,7 @@ export function IncomeFormDialog({
           </Button>
         }
       />
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Record Income</DialogTitle>
         </DialogHeader>

@@ -21,7 +21,7 @@ export default async function ReportsPage({
   const [rows, summary, customersResult, currentBalance] = await Promise.all([
     reportsRepository.getTransactions(filters),
     reportsRepository.getSummary(filters),
-    customerRepository.list({ pageSize: 500 }),
+    customerRepository.list({ pageSize: 500, sortBy: "fullName", sortDir: "asc" }),
     ledgerRepository.getCurrentBalance(),
   ]);
 

@@ -62,14 +62,14 @@ export function IncomeForm({
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="date">Date</Label>
           <Input id="date" type="date" {...register("date")} />
           {errors.date && <p className="text-xs text-sent">{errors.date.message}</p>}
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label>Customer</Label>
           <Controller
             control={control}
@@ -77,7 +77,9 @@ export function IncomeForm({
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a customer" />
+                  <SelectValue placeholder="Select a customer">
+                    {(value: string) => customers.find((c) => c.id === value)?.fullName ?? "Select a customer"}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {customers.map((c) => (
@@ -93,13 +95,13 @@ export function IncomeForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="amount">Amount</Label>
           <Input id="amount" type="number" step="0.01" min="0" {...register("amount")} />
           {errors.amount && <p className="text-xs text-sent">{errors.amount.message}</p>}
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label>Currency</Label>
           <Controller
             control={control}
@@ -122,7 +124,7 @@ export function IncomeForm({
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Label>Payment Method</Label>
         <Controller
           control={control}
@@ -145,12 +147,12 @@ export function IncomeForm({
         {errors.paymentMethod && <p className="text-xs text-sent">{errors.paymentMethod.message}</p>}
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="referenceNumber">Reference Number</Label>
         <Input id="referenceNumber" {...register("referenceNumber")} />
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <Label htmlFor="notes">Notes</Label>
         <Textarea id="notes" rows={3} {...register("notes")} />
       </div>

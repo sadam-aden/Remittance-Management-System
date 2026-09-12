@@ -30,7 +30,7 @@ export default async function IncomePage({
 
   const [{ items, total }, customersResult, currencies, settings] = await Promise.all([
     incomeRepository.list({ search, status, page, pageSize, sortBy, sortDir }),
-    customerRepository.list({ pageSize: 500 }),
+    customerRepository.list({ pageSize: 500, sortBy: "fullName", sortDir: "asc" }),
     currencyRepository.listActive(),
     settingsRepository.get(),
   ]);
