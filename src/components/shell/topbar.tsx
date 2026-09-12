@@ -1,5 +1,6 @@
 import { Bell } from "lucide-react";
 import { UserMenu } from "./user-menu";
+import { ThemeToggle } from "./theme-toggle";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -31,6 +32,7 @@ export function Topbar({
         <p className="mt-1 text-sm text-text-muted">{today} · All branches</p>
       </div>
       <div className="flex items-center gap-3">
+        <ThemeToggle />
         <div className="flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-card">
           <Bell size={16} className="text-text-muted" />
         </div>
