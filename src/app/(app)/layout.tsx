@@ -8,12 +8,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen w-full">
-      <Sidebar />
+      <Sidebar isAdmin={session.user.role === "admin"} />
       <main className="flex w-full max-w-[1400px] flex-1 flex-col gap-6 p-6 pb-24 md:p-8 md:pb-8">
         <Topbar userName={session.user.name} userEmail={session.user.email ?? ""} />
         {children}
       </main>
-      <BottomNav />
+      <BottomNav isAdmin={session.user.role === "admin"} />
     </div>
   );
 }

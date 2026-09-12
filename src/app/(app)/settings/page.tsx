@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { currencyRepository } from "@/lib/repositories/currency-repository";
 import { exchangeRateRepository } from "@/lib/repositories/exchange-rate-repository";
 import { userRepository } from "@/lib/repositories/user-repository";
-import { requireSession } from "@/lib/auth-helpers";
+import { requireAdmin } from "@/lib/auth-helpers";
 import { ExchangeRatesPanel } from "./exchange-rates-panel";
 import { UsersPanel } from "./users-panel";
 
 export const metadata: Metadata = { title: "Settings — Remittance Desk" };
 
 export default async function SettingsPage() {
-  const session = await requireSession();
+  const session = await requireAdmin();
   const [currencies, rates, users] = await Promise.all([
     currencyRepository.listActive(),
     exchangeRateRepository.list(),

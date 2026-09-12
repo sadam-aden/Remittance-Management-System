@@ -38,8 +38,11 @@ const navSections = [
   },
 ];
 
-export function Sidebar() {
+export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
+  const visibleSections = isAdmin
+    ? navSections
+    : navSections.filter((section) => section.label !== "System");
 
   return (
     <aside className="hidden w-[248px] shrink-0 flex-col gap-8 border-r border-hairline bg-panel px-4 py-6 md:flex">
@@ -50,7 +53,7 @@ export function Sidebar() {
         <span className="font-display font-bold text-text-primary">Remittance Desk</span>
       </Link>
 
-      {navSections.map((section) => (
+      {visibleSections.map((section) => (
         <div key={section.label} className="flex flex-col gap-1">
           <span className="mb-1 px-2 text-[11px] tracking-wide text-text-muted">
             {section.label.toUpperCase()}

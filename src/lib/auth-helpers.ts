@@ -39,3 +39,17 @@ export async function requireSession() {
 
   return session;
 }
+
+/**
+ * Same as requireSession(), but additionally rejects non-admin accounts.
+ * Use this for Server Actions that must be admin-only (user management,
+ * settings, exchange rates, deleting customers) — role must be enforced
+ * here, server-side; the UI hiding a button is not an authorization check.
+ */
+export async function requireAdmin() {
+  const session = await requireSession();
+  if (session.user.role !== "admin") {
+    redirect("/dashboard?error=Forbidden");
+  }
+  return session;
+}

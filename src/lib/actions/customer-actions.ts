@@ -66,6 +66,9 @@ export async function updateCustomerAction(id: string, input: unknown) {
 
 export async function deleteCustomerAction(id: string) {
   const session = await requireSession();
+  if (session.user.role !== "admin") {
+    return { success: false as const, error: "Admin access required." };
+  }
   const actor = { userId: session.user.id, ipAddress: await getClientIp() };
 
   try {

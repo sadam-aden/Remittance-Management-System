@@ -23,18 +23,19 @@ export function ReceiptUpload({
 
     setIsUploading(true);
     try {
-      const prep = await createReceiptUploadUrlAction(file.name, file.type);
+      const prep = await createReceiptUploadUrlAction(file.name, file.type, file.size);
       if (!prep.success) {
         toast.error(prep.error);
         return;
       }
 
-      const putResult = await fetch(prep.uploadUrl, {
-        method: "PUT",
-        headers: { "content-type": file.type },
-        body: file,
-      });
-      if (!putResult.ok) {
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(prep.fields)) {
+        formData.append(key, value);
+      }
+      formData.append("file", file);
+      const postResult = await fetch(prep.uploadUrl, { method: "POST", body: formData });
+      if (!postResult.ok) {
         toast.error("Upload failed — please try again.");
         return;
       }

@@ -1,5 +1,10 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { S3Client } from "@aws-sdk/client-s3";
+import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
+
+// Presigned PUT URLs can't enforce a max size — only a policy-based presigned
+// POST can (via a content-length-range condition), so uploads use POST even
+// though a plain PUT would otherwise be simpler.
+export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8 MB
 
 interface R2Config {
   accessKeyId: string;
@@ -46,18 +51,29 @@ function getClient(config: R2Config): S3Client {
 }
 
 /**
- * A presigned PUT URL the browser uploads directly to — the file bytes never
- * pass through our server. Returns both the upload URL (short-lived) and the
- * permanent public URL to store once the upload succeeds.
+ * A presigned POST policy the browser uploads directly to — the file bytes
+ * never pass through our server. Enforces the exact content-type and a max
+ * size (MAX_UPLOAD_BYTES) as signed policy conditions, so R2 itself rejects
+ * an oversized or mismatched-type upload rather than trusting the client.
+ * Returns the POST url + form fields to submit, and the permanent public URL
+ * to store once the upload succeeds.
  */
 export async function createPresignedUploadUrl(key: string, contentType: string) {
   const config = getR2Config();
   if (!config) throw new Error("R2 is not configured");
 
   const client = getClient(config);
-  const command = new PutObjectCommand({ Bucket: config.bucket, Key: key, ContentType: contentType });
-  const uploadUrl = await getSignedUrl(client, command, { expiresIn: 300 });
+  const { url, fields } = await createPresignedPost(client, {
+    Bucket: config.bucket,
+    Key: key,
+    Conditions: [
+      ["content-length-range", 0, MAX_UPLOAD_BYTES],
+      ["eq", "$Content-Type", contentType],
+    ],
+    Fields: { "Content-Type": contentType },
+    Expires: 300,
+  });
   const publicUrl = `${config.publicUrl.replace(/\/$/, "")}/${key}`;
 
-  return { uploadUrl, publicUrl };
+  return { uploadUrl: url, fields, publicUrl };
 }

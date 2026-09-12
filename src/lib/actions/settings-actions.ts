@@ -13,6 +13,9 @@ function emptyToNull(value: string | undefined) {
 
 export async function updateSettingsAction(input: unknown, logoUrl?: string | null) {
   const session = await requireSession();
+  if (session.user.role !== "admin") {
+    return { success: false as const, error: "Admin access required." };
+  }
   const parsed = settingsFormSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false as const, error: parsed.error.issues[0]?.message ?? "Invalid input" };
@@ -44,7 +47,10 @@ export async function updateSettingsAction(input: unknown, logoUrl?: string | nu
 }
 
 export async function createExchangeRateAction(input: unknown) {
-  await requireSession();
+  const session = await requireSession();
+  if (session.user.role !== "admin") {
+    return { success: false as const, error: "Admin access required." };
+  }
   const parsed = exchangeRateFormSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false as const, error: parsed.error.issues[0]?.message ?? "Invalid input" };
@@ -61,7 +67,10 @@ export async function createExchangeRateAction(input: unknown) {
 }
 
 export async function deleteExchangeRateAction(id: string) {
-  await requireSession();
+  const session = await requireSession();
+  if (session.user.role !== "admin") {
+    return { success: false as const, error: "Admin access required." };
+  }
   try {
     await exchangeRateRepository.delete(id);
     revalidatePath("/settings");

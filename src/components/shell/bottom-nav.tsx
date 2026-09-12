@@ -41,9 +41,10 @@ function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function BottomNav() {
+export function BottomNav({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
-  const isMoreActive = moreItems.some((item) => isActivePath(pathname, item.href));
+  const visibleMoreItems = isAdmin ? moreItems : moreItems.filter((item) => item.name !== "Settings");
+  const isMoreActive = visibleMoreItems.some((item) => isActivePath(pathname, item.href));
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around border-t border-hairline bg-panel pb-[env(safe-area-inset-bottom)] md:hidden">
@@ -82,7 +83,7 @@ export function BottomNav() {
             <SheetTitle>More</SheetTitle>
           </SheetHeader>
           <div className="flex flex-col gap-1 px-4 pb-4">
-            {moreItems.map((item) => {
+            {visibleMoreItems.map((item) => {
               const isActive = isActivePath(pathname, item.href);
               return (
                 <Link

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { incomeFormSchema } from "@/lib/validation/income";
+import { transactionStatusSchema } from "@/lib/validation/transaction-status";
 import { incomeRepository } from "@/lib/repositories/income-repository";
 import { requireSession } from "@/lib/auth-helpers";
 import { getClientIp } from "@/lib/get-client-ip";
@@ -46,10 +47,14 @@ export async function createIncomeAction(input: unknown, idempotencyKey: string)
 
 export async function updateIncomeStatusAction(id: string, status: TransactionStatus) {
   const session = await requireSession();
+  const parsedStatus = transactionStatusSchema.safeParse(status);
+  if (!parsedStatus.success) {
+    return { success: false as const, error: "Invalid status" };
+  }
   const actor = { userId: session.user.id, ipAddress: await getClientIp() };
 
   try {
-    await incomeRepository.updateStatus(id, status, actor);
+    await incomeRepository.updateStatus(id, parsedStatus.data, actor);
     revalidatePath("/income");
     revalidatePath("/dashboard");
     return { success: true as const };

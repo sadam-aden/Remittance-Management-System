@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { sentFormSchema } from "@/lib/validation/sent";
+import { transactionStatusSchema } from "@/lib/validation/transaction-status";
 import { sentRepository } from "@/lib/repositories/sent-repository";
 import { beneficiaryRepository } from "@/lib/repositories/beneficiary-repository";
 import { requireSession } from "@/lib/auth-helpers";
@@ -14,7 +15,8 @@ function emptyToNull(value: string | undefined) {
 
 export async function searchBeneficiariesAction(query: string) {
   await requireSession();
-  return beneficiaryRepository.search(query);
+  if (typeof query !== "string" || query.length === 0) return [];
+  return beneficiaryRepository.search(query.slice(0, 200));
 }
 
 export async function createSentAction(
@@ -65,10 +67,14 @@ export async function createSentAction(
 
 export async function updateSentStatusAction(id: string, status: TransactionStatus) {
   const session = await requireSession();
+  const parsedStatus = transactionStatusSchema.safeParse(status);
+  if (!parsedStatus.success) {
+    return { success: false as const, error: "Invalid status" };
+  }
   const actor = { userId: session.user.id, ipAddress: await getClientIp() };
 
   try {
-    await sentRepository.updateStatus(id, status, actor);
+    await sentRepository.updateStatus(id, parsedStatus.data, actor);
     revalidatePath("/sent");
     revalidatePath("/dashboard");
     return { success: true as const };

@@ -13,6 +13,9 @@ import { getClientIp } from "@/lib/get-client-ip";
 // as login/logout/print/export.
 export async function createUserAction(input: unknown) {
   const session = await requireSession();
+  if (session.user.role !== "admin") {
+    return { success: false as const, error: "Admin access required." };
+  }
   const parsed = userFormSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false as const, error: parsed.error.issues[0]?.message ?? "Invalid input" };
@@ -51,6 +54,9 @@ export async function createUserAction(input: unknown) {
 
 export async function updateUserAction(id: string, input: unknown) {
   const session = await requireSession();
+  if (session.user.role !== "admin") {
+    return { success: false as const, error: "Admin access required." };
+  }
   const parsed = userEditFormSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false as const, error: parsed.error.issues[0]?.message ?? "Invalid input" };
@@ -89,6 +95,9 @@ export async function updateUserAction(id: string, input: unknown) {
 
 export async function deleteUserAction(id: string) {
   const session = await requireSession();
+  if (session.user.role !== "admin") {
+    return { success: false as const, error: "Admin access required." };
+  }
 
   if (id === session.user.id) {
     return { success: false as const, error: "You can't delete your own account." };
@@ -113,6 +122,9 @@ export async function deleteUserAction(id: string) {
 
 export async function setUserActiveAction(id: string, isActive: boolean) {
   const session = await requireSession();
+  if (session.user.role !== "admin") {
+    return { success: false as const, error: "Admin access required." };
+  }
 
   if (id === session.user.id && !isActive) {
     return { success: false as const, error: "You can't deactivate your own account." };
